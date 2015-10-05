@@ -41,7 +41,7 @@ public class DatabaseHandler {
         
         ArrayList<String> mac = new ArrayList<>();
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT DESTINCT mac FROM device");
+        ResultSet rs = stmt.executeQuery("SELECT DISTINCT mac FROM device");
         
         while (rs.next()){
             mac.add(rs.getString(1));
