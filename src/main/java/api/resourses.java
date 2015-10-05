@@ -77,15 +77,14 @@ public final class resourses {
             while ((line = bufferedReader.readLine()) != null) {
                 System.out.println(line);
                 JSONArray jsA = new JSONArray(line);
-                jsonManufacturer = new JSONObject(jsA.getJSONObject(0));           
+                return new Manufacturer(jsA.getJSONObject(0).getString("company"), 1);
             }
         } catch (IOException | JSONException ex) {
             System.out.println(ex.getMessage());
             return null;
         }
-        System.out.println("company" + jsonManufacturer.get("company"));
-            return new Manufacturer(jsonManufacturer.get("company").toString(), 0);
-
+        
+        return null;
     }
 
     final URL prepareGetManufacturerURL(String mac) throws MalformedURLException {
