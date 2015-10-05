@@ -40,20 +40,30 @@ public final class resourses {
         //tijdelijk, totdat de MACS in de database wel kloppen
         List<String> macs = new ArrayList<>();
         macs.add("38aa3cb47edf");
+        macs.add("38aa3cb47edf");
         
         List<Manufacturer> manufacturers = new ArrayList<>();
         if (!macs.isEmpty()) {
             for (String mac : macs) {
                 Manufacturer man = getManufacturerByMac(mac);
                 if (man != null) {
-                    if (manufacturers.contains(man)) {
-                        manufacturers.get(manufacturers.indexOf(man)).addOneToAmount();
-                    } else {
+                    boolean found = false;
+                    for(Manufacturer man2 : manufacturers)
+                    {
+                        if(man.toString().equals(man2.toString()))
+                        {
+                            found = true;
+                            manufacturers.get(manufacturers.indexOf(man)).addOneToAmount();
+                            break;
+                        }
+                    }
+                    if(found = false)
+                    {
                         manufacturers.add(man);
                     }
                 }
             }
-        }
+        }      
         return manufacturers;
     }
 
@@ -75,7 +85,6 @@ public final class resourses {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                System.out.println(line);
                 JSONArray jsA = new JSONArray(line);
                 return new Manufacturer(jsA.getJSONObject(0).getString("company"), 1);
             }
