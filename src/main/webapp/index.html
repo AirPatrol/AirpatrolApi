@@ -15,7 +15,7 @@ and open the template in the editor.
                 console.log("attempting ajax call");
                 $.ajax({
                     url: 'api/airpatrol',
-                    dataType: 'application/json; charset=utf8',
+                    dataType: 'jsonp; charset=utf8',
                     complete: function(data){
                         console.log(data.responseText);
                     }

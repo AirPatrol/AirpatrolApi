@@ -16,6 +16,7 @@ import javax.naming.NamingException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 import model.Manufacturer;
 
 /**
@@ -28,31 +29,42 @@ public class airpatrolapi {
     
     @GET
     @Produces("application/json")
-    public String Test(){
-        return "Hallo";
+    public Response Test(){
+        //return "Hallo";
+        return Response.ok()
+                .entity("hallo")
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+                .allow("OPTIONS").build();
     }
     
     @GET
     @Produces("application/json")
     @Path("/mac")
-    public String getMacAddresses(){
+    public Response getMacAddresses(){
         try {
             DatabaseHandler h = new DatabaseHandler();
             Gson gson = new Gson();
-            return gson.toJson(h.getAllMacAddresses());
+            
+            return Response.ok()
+                .entity(gson.toJson(h.getAllMacAddresses()))
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+                .allow("OPTIONS").build();
+            
         } catch (NamingException ex) {
             Logger.getLogger(airpatrolapi.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(airpatrolapi.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        return "";
+        return Response.serverError().build();
     }
     
     @GET
     @Produces("application/json")
     @Path("/manufacturer")
-    public String getManufacturers(){
+    public Response getManufacturers(){
         Gson gson = new Gson();
         List<Manufacturer> m = new ArrayList<>();
         m.add(new Manufacturer("SAMSUNG", 100));
@@ -62,6 +74,11 @@ public class airpatrolapi {
         m.add(new Manufacturer("CRACKBERRY", 1));
         m.add(new Manufacturer("XIAOMI", 66));
         m.add(new Manufacturer("YOTAPHONE", 17));
-        return gson.toJson(m);
+        
+        return Response.ok()
+                .entity(gson.toJson(m))
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+                .allow("OPTIONS").build();
     }
 }
