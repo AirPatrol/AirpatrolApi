@@ -35,12 +35,7 @@ public final class resourses {
     }
 
     public final List<Manufacturer> getListOfManufacturers() throws SQLException {
-        //List<String> macs = DBhandler.getAllMacAddresses();
-        
-        //tijdelijk, totdat de MACS in de database wel kloppen
-        List<String> macs = new ArrayList<>();
-        macs.add("38aa3cb47edf");
-        macs.add("38aa3cb47edf");
+        List<String> macs = DBhandler.getAllMacAddresses();
         
         List<Manufacturer> manufacturers = new ArrayList<>();
         if (!macs.isEmpty()) {
