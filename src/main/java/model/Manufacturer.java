@@ -10,20 +10,30 @@ package model;
  * @author Daan
  */
 public class Manufacturer {
-    
+
     private String name;
     private int amount;
-    
-    public Manufacturer(String name, int amount){
+
+    public Manufacturer(String name, int amount) {
         this.name = name;
         this.amount = amount;
     }
-    
-    public String getName(){
+
+    public String getName() {
         return name;
     }
-    
-    public int getAmount(){
+
+    public int getAmount() {
         return amount;
     }
+
+    public void addOneToAmount() {
+        amount = amount + 1;
+    }
+
+    @Override
+    public String toString() {
+        return (this.name + ", " + amount);
+    }
+
 }
