@@ -8,12 +8,15 @@ package api;
 import com.google.gson.Gson;
 import database.DatabaseHandler;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import model.Manufacturer;
 
 /**
  *
@@ -44,5 +47,21 @@ public class airpatrolapi {
         }
         
         return "";
+    }
+    
+    @GET
+    @Produces("application/json")
+    @Path("/manufacturer")
+    public String getManufacturers(){
+        Gson gson = new Gson();
+        List<Manufacturer> m = new ArrayList<>();
+        m.add(new Manufacturer("SAMSUNG", 100));
+        m.add(new Manufacturer("APPLE", 74));
+        m.add(new Manufacturer("NOKIA", 23));
+        m.add(new Manufacturer("HTC", 56));
+        m.add(new Manufacturer("CRACKBERRY", 1));
+        m.add(new Manufacturer("XIAOMI", 66));
+        m.add(new Manufacturer("YOTAPHONE", 17));
+        return gson.toJson(m);
     }
 }
