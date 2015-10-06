@@ -15,7 +15,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.naming.NamingException;
 import model.Manufacturer;
 import org.json.JSONArray;
@@ -34,61 +36,63 @@ public final class resourses {
         this.DBhandler = new DatabaseHandler();
     }
 
-    public final List<Manufacturer> getListOfManufacturers() throws SQLException {
-        List<String> macs = DBhandler.getAllMacAddresses();
+    final List<Manufacturer> getManufacturerByMac() throws SQLException {
         
-        List<Manufacturer> manufacturers = new ArrayList<>();
-        if (!macs.isEmpty()) {
-            for (String mac : macs) {
-                Manufacturer man = getManufacturerByMac(mac);
-                if (man != null) {
-                    boolean found = false;
-                    for(Manufacturer man2 : manufacturers)
-                    {
-                        if(man.toString().equals(man2.toString()))
-                        {
-                            found = true;
-                            manufacturers.get(manufacturers.indexOf(man)).addOneToAmount();
-                            break;
-                        }
+        ArrayList<Manufacturer> m = new ArrayList();
+        HashMap<String, Integer> hm = new HashMap();
+        
+        for (String s : DBhandler.getAllMacAddresses()){
+            JSONObject jsonManufacturer = null;
+            try {
+                URL url = prepareGetManufacturerURL(s);
+                HttpURLConnection getManufacturer = (HttpURLConnection) url.openConnection();
+                getManufacturer.setRequestMethod("GET");
+                System.out.println(getManufacturer.getURL());
+                String code = String.valueOf(getManufacturer.getResponseCode());
+                System.out.println("HTTP Error code " + code);
+                if(getManufacturer.getResponseCode() == 204 )
+                {
+                    if (hm.get("other") != null){
+                        hm.put("other", hm.get("other") + 1);
                     }
-                    if(found = false)
+                    else
                     {
-                        manufacturers.add(man);
+                        hm.put("other",1);
                     }
                 }
-            }
-        }      
-        return manufacturers;
-    }
+                else
+                {
+                    InputStream is = getManufacturer.getInputStream();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        JSONArray jsA = new JSONArray(line);
+                        String manu = jsA.getJSONObject(0).getString("company");
 
-    final Manufacturer getManufacturerByMac(String mac) {
-        JSONObject jsonManufacturer = null;
-        try {
-            URL url = prepareGetManufacturerURL(mac);
-            HttpURLConnection getManufacturer = (HttpURLConnection) url.openConnection();
-            getManufacturer.setRequestMethod("GET");
-            System.out.println(getManufacturer.getURL());
-            String code = String.valueOf(getManufacturer.getResponseCode());
-            System.out.println("HTTP Error code " + code);
-            if(getManufacturer.getResponseCode() == 204)
-            {
-             return new Manufacturer("other", 0);   
+                        if (hm.get(manu) != null){
+                            hm.put(manu, hm.get(manu) + 1);
+                        }
+                        else
+                        {
+                            hm.put(manu,1);
+                        }
+                    }
+                }
+            } catch (IOException | JSONException ex) {
+                System.out.println(ex.getMessage());
+                return m;
             }
-                 
-            InputStream is = getManufacturer.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                JSONArray jsA = new JSONArray(line);
-                return new Manufacturer(jsA.getJSONObject(0).getString("company"), 1);
-            }
-        } catch (IOException | JSONException ex) {
-            System.out.println(ex.getMessage());
-            return null;
         }
         
-        return null;
+        System.out.println(hm.size());
+        
+        while (hm.entrySet().iterator().hasNext()){
+            Map.Entry<String,Integer> pair = (Map.Entry<String,Integer>)hm.entrySet().iterator().next();
+            hm.remove(pair.getKey());
+            m.add(new Manufacturer(pair.getKey(),pair.getValue()));
+        }
+        
+        return m;
     }
 
     final URL prepareGetManufacturerURL(String mac) throws MalformedURLException {
