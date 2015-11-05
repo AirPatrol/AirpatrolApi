@@ -8,6 +8,7 @@ package api;
 import com.google.gson.Gson;
 import database.DatabaseHandler;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.NamingException;
@@ -15,6 +16,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import model.Manufacturer;
 
 /**
  *
@@ -27,7 +29,8 @@ public class airpatrolapi {
     @GET
     @Produces("application/json")
     public Response Test(){
-        /*try {
+        try {
+            /*try {
             resourses r = new resourses();
             DatabaseHandler h = new DatabaseHandler();
             
@@ -40,17 +43,31 @@ public class airpatrolapi {
             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
             .allow("OPTIONS").build();
             
+            } catch (NamingException ex) {
+            Logger.getLogger(airpatrolapi.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+            Logger.getLogger(airpatrolapi.class.getName()).log(Level.SEVERE, null, ex);
+            }*/
+            
+            resourses r = new resourses();
+            DatabaseHandler h = new DatabaseHandler();
+            
+            Gson gson = new Gson();
+            
+            List<Manufacturer> s = r.sortList(r.getManufacturerByMac());
+            
+            return Response.ok()
+                    .entity(gson.toJson(s))
+                    .header("Access-Control-Allow-Origin", "*")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+                    .allow("OPTIONS").build();
         } catch (NamingException ex) {
             Logger.getLogger(airpatrolapi.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(airpatrolapi.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
+        }
         
-        return Response.ok()
-                .entity("hallo")
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                .allow("OPTIONS").build();
+        return Response.serverError().build();
     }
     
     @GET
@@ -85,7 +102,7 @@ public class airpatrolapi {
             resourses r = new resourses();
             
             return Response.ok()
-                    .entity(gson.toJson(r.getManufacturerByMac()))
+                    .entity(gson.toJson(r.sortList(r.getManufacturerByMac())))
                     .header("Access-Control-Allow-Origin", "*")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
                     .allow("OPTIONS").build();

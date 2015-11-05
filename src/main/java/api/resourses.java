@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import javax.naming.NamingException;
 import model.Manufacturer;
+import model.Whitelist;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -102,5 +103,34 @@ public final class resourses {
         getManufacturerURL.append(mac);
         return new URL(getManufacturerURL.toString());
     }
+    
+    public List<Manufacturer> sortList(List<Manufacturer> manu){
+        List<Manufacturer> sortedList = new ArrayList();
+        Whitelist l = new Whitelist();
+        for (String s : l.getWhiteList()){
+            sortedList.add(new Manufacturer(s, 0));
+        }
+        
+        for (Manufacturer m : manu){
+            boolean added = false;
+            for (String s : l.getWhiteList()){
+                if (m.getName().toLowerCase().contains(s)){
+                    for (Manufacturer mf : sortedList){
+                        if (mf.getName().toLowerCase().equals(s)){
+                            mf.addAmount(m.getAmount());
+                            added = true;
+                        }
+                    }
+                }
+            }
+            
+            if (!added){
+                sortedList.add(m);
+            }
+        }
+        
+        return sortedList;
+    }
+    
 
 }

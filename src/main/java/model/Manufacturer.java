@@ -30,6 +30,10 @@ public class Manufacturer {
     public void addOneToAmount() {
         amount = amount + 1;
     }
+    
+    public void addAmount(int amount){
+        this.amount += amount;
+    }
 
     @Override
     public String toString() {
